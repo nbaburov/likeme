@@ -4,6 +4,11 @@ A marketplace where clients buy social media exposure (likes, comments, follows,
 
 I built it alone in my third semester of ICT & Software Engineering at Fontys University of Applied Sciences, between September 2024 and January 2025. This repository is the archived version, merged from the original separate frontend and backend repositories into one monorepo that boots with a single command and comes with seeded demo data.
 
+| | |
+|---|---|
+| ![Landing page](docs/screenshots/landing.png) | ![Influencer marketplace](docs/screenshots/marketplace.png) |
+| ![Admin analytics](docs/screenshots/admin-dashboard.png) | ![Client dashboard](docs/screenshots/client-dashboard.png) |
+
 ## Run it
 
 You need Docker with Compose.
@@ -23,7 +28,7 @@ The first build takes a few minutes. When it settles:
 | API | http://localhost:8080/api |
 | API docs (Swagger) | http://localhost:8080/api/docs/swagger |
 
-A one-shot `seed` container fills the database with around 100 clients, 35 influencers, 200 orders and their invoices. It is safe to run again; it skips anything already present.
+A one-shot `seed` container fills the database with around 100 clients, 35 influencers, 200 orders and their invoices. It is safe to run again; it skips anything already present. Avatars are loaded from [randomuser.me](https://randomuser.me) and cover images from [Unsplash](https://unsplash.com), so the browser needs internet access to show them.
 
 ### Demo accounts
 
