@@ -16,6 +16,21 @@ jobs:
   api:
     name: API tests
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: likeme
+          MYSQL_USER: likeme_mod
+          MYSQL_PASSWORD: likeme
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 30
     defaults:
       run:
         working-directory: apps/api
@@ -64,7 +79,8 @@ jobs:
         run: docker compose up -d --build
       - name: Wait for the seed to finish
         run: |
-          code=$(docker compose wait seed)
+          # docker wait also reports the exit code of a container that has already stopped.
+          code=$(docker wait "$(docker compose ps -aq seed)")
           docker compose logs seed
           test "$code" = "0"
       - name: Wait for the web app

@@ -63,10 +63,13 @@ docs/
   architecture/  C4 model (Structurizr DSL) and a PlantUML code diagram
 ```
 
-The API follows a layered structure: controllers, a business layer with services and validators, and repositories. MySQL 8.4 holds the data, with the schema managed by Flyway migrations. The backend test suite runs against an in-memory H2 database:
+The API follows a layered structure: controllers, a business layer with services and validators, and repositories. MySQL 8.4 holds the data, with the schema managed by Flyway migrations. The backend's tests need JDK 21, and its integration tests need a real MySQL. Give them a throwaway one rather than the demo database:
 
 ```bash
-cd apps/api && ./gradlew test
+docker run --rm -d --name likeme-test-db -p 3307:3306 \
+  -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=likeme \
+  -e MYSQL_USER=likeme_mod -e MYSQL_PASSWORD=likeme mysql:8.4
+cd apps/api && SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3307/likeme ./gradlew test
 ```
 
 The Cypress end-to-end specs run against a booted stack:
