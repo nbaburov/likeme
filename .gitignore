@@ -1,0 +1,25 @@
+.env
+!.env.example
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# api
+apps/api/.gradle/
+apps/api/build/
+apps/api/logs/
+apps/api/uploads/
+
+# web
+apps/web/node_modules/
+apps/web/.next/
+apps/web/out/
+apps/web/next-env.d.ts
+apps/web/*.tsbuildinfo
+apps/web/cypress/videos/
+apps/web/cypress/screenshots/
+apps/web/cypress/downloads/
+
+# seed
+__pycache__/

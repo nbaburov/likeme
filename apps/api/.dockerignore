@@ -1,0 +1,13 @@
+.git
+.gitignore
+.gradle
+build
+!build/libs/*.jar
+.idea
+*.iml
+*.iws
+*.ipr
+logs/
+.sonar/
+.scannerwork/
+README.md

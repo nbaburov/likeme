@@ -1,0 +1,21 @@
+package fontys.sem3.likeme.controller.dto.invoice;
+
+import fontys.sem3.likeme.domain.invoice.InvoiceStatus;
+import jakarta.validation.constraints.DecimalMin;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateInvoiceRequest {
+    @DecimalMin(value = "0.0", message = "Amount must be positive")
+    private BigDecimal amount;
+    
+    private InvoiceStatus status;
+} 

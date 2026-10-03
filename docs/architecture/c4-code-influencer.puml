@@ -1,0 +1,238 @@
+@startuml
+title C4 Level 4 - Code Diagram for Influencer
+
+package "fontys.sem3.likeme.controller" {
+    class BaseController {
+
+    }
+    class InfluencerController {
+
+    }
+
+    class CreateInfluencerApplicationRequest
+    class UpdateInfluencerApplicationRequest
+    class InfluencerApplicationResponse
+    class CreateInfluencerRequest
+    class ConnectInstagramRequest
+    class CompleteSetupRequest
+    class UpdateInfluencerRequest
+    class InfluencerResponse
+}
+
+InfluencerController --> BaseController : "Extends"
+InfluencerController --> CreateInfluencerRequest : "Uses"
+InfluencerController --> ConnectInstagramRequest : "Uses"
+InfluencerController --> CompleteSetupRequest : "Uses"
+InfluencerController --> UpdateInfluencerRequest : "Uses"
+InfluencerController --> InfluencerResponse : "Returns"
+InfluencerController --> CreateInfluencerApplicationRequest : "Uses"
+InfluencerController --> UpdateInfluencerApplicationRequest : "Uses"
+InfluencerController --> InfluencerApplicationResponse : "Returns"
+
+
+package "fontys.sem3.likeme.business.domain.user" {
+    class User 
+    enum Role
+    class Influencer
+    class InfluencerApplication
+    enum InfluencerStatus
+    class SetupToken
+    class BillingDetails
+}
+
+User --> Role : "Uses"
+Influencer --> User : "Extends"
+Influencer --> InfluencerApplication : "Uses"
+InfluencerApplication --> BillingDetails : "Uses"
+Influencer --> InfluencerStatus : "Uses"
+SetupToken --> InfluencerApplication : "Uses"
+
+
+package "fontys.sem3.likeme.business" {
+    interface InfluencerService {
+
+    }
+
+    class InfluencerServiceImpl {
+
+    }
+
+    class InfluencerConverter {
+
+    }
+
+    interface InfluencerApplicationService {
+
+    }
+
+    class InfluencerApplicationServiceImpl {
+
+    }
+
+    class InfluencerApplicationConverter {
+
+    }
+
+    class BillingDetailsConverter {
+
+    }
+
+    interface SetupTokenService {
+
+    }
+
+    class SetupTokenServiceImpl {
+
+    }
+
+    exception ApplicationPhotosDeletionException {
+
+    }
+
+    exception DuplicateInfluencerDataException {
+
+    }
+
+
+    exception InfluencerNotFoundException {
+
+    }
+
+    exception InfluencerServiceException {
+
+    }
+
+    exception InfluencerSetupException {
+
+    }
+
+    exception InvalidInfluencerDataException {
+
+    }
+
+    exception InvalidSetupTokenException {
+
+    }
+
+    exception SetupTokenServiceException {
+
+    }
+
+    exception EmailSendingException {
+
+    }
+
+    interface EmailService {
+
+    }
+
+    class EmailServiceImpl {
+
+    }
+
+    class InfluencerApplicationValidator {
+
+    }
+
+    class InfluencerValidator {
+
+    }
+
+}
+
+
+InfluencerServiceImpl ..|> InfluencerService : "Implements"
+InfluencerApplicationServiceImpl ..|> InfluencerApplicationService : "Implements"
+SetupTokenServiceImpl ..|> SetupTokenService : "Implements"
+EmailServiceImpl ..|> EmailService : "Implements"
+
+InfluencerController --> InfluencerConverter : "Uses"
+InfluencerConverter --> InfluencerApplicationConverter : "Uses"
+InfluencerApplicationConverter --> BillingDetailsConverter : "Uses"
+
+InfluencerApplicationServiceImpl --> ApplicationPhotosDeletionException : "thrown"
+InfluencerApplicationServiceImpl --> DuplicateInfluencerDataException : "thrown"
+InfluencerApplicationServiceImpl --> InfluencerNotFoundException : "thrown"
+
+InfluencerServiceImpl --> InvalidSetupTokenException : "thrown"
+InfluencerServiceImpl --> DuplicateInfluencerDataException : "thrown"
+InfluencerServiceImpl --> InfluencerNotFoundException : "thrown"
+InfluencerServiceImpl --> InfluencerServiceException : "thrown"
+InfluencerServiceImpl --> InfluencerSetupException : "thrown"
+InfluencerServiceImpl --> InvalidInfluencerDataException : "thrown"
+
+EmailServiceImpl --> EmailSendingException : "thrown"
+
+SetupTokenServiceImpl --> InvalidSetupTokenException : "thrown"
+SetupTokenServiceImpl --> SetupTokenServiceException : "thrown"
+
+
+package "fontys.sem3.likeme.data" {
+    interface InfluencerRepository {
+    }
+
+    class InfluencerRepositoryImpl {
+
+    }
+    
+    interface InfluencerRepositoryJPA {
+
+    }
+
+    interface InfluencerApplicationRepository {
+
+    }
+
+    interface InfluencerApplicationRepositoryJPA {
+
+    }
+
+    class InfluencerApplicationRepositoryImpl {
+
+    }
+
+    interface SetupTokenRepository {
+
+    }
+
+    interface SetupTokenRepositoryJPA {
+
+    }
+
+    class SetupTokenRepositoryImpl {
+
+    }
+}
+
+SetupTokenRepositoryImpl ..|> SetupTokenRepository : "Implements"
+InfluencerApplicationRepositoryImpl ..|> InfluencerApplicationRepository : "Implements"
+InfluencerRepositoryImpl ..|> InfluencerRepository : "Implements"
+
+SetupTokenRepositoryImpl --> SetupTokenRepositoryJPA : "Uses"
+InfluencerApplicationRepositoryImpl --> InfluencerApplicationRepositoryJPA : "Uses"
+InfluencerRepositoryImpl --> InfluencerRepositoryJPA : "Uses"
+
+package "Database" {
+    class MySQLDB
+}
+
+SetupTokenServiceImpl --> SetupTokenRepository : "Uses"
+
+InfluencerApplicationServiceImpl --> InfluencerApplicationRepository : "Uses"
+InfluencerApplicationServiceImpl --> InfluencerApplicationValidator : "Uses"
+InfluencerApplicationServiceImpl --> EmailService : "Uses"
+InfluencerApplicationServiceImpl --> InfluencerService : "Uses"
+InfluencerApplicationServiceImpl --> SetupTokenService : "Uses"
+
+InfluencerServiceImpl --> InfluencerRepository : "Uses"
+InfluencerServiceImpl --> InfluencerApplicationRepository : "Uses"
+InfluencerServiceImpl --> SetupTokenService : "Uses"
+InfluencerServiceImpl --> InfluencerValidator : "Uses"
+InfluencerServiceImpl --> InfluencerApplicationValidator : "Uses"
+
+InfluencerApplicationRepositoryImpl --> MySQLDB : "Stores application data"
+
+InfluencerRepositoryImpl --> MySQLDB : "Stores influencer data"
+
+SetupTokenRepositoryImpl --> MySQLDB : "Stores setup token data"
+@enduml

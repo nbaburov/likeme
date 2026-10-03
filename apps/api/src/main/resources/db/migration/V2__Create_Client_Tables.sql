@@ -1,0 +1,22 @@
+CREATE TABLE clients (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    salt VARCHAR(255) NOT NULL,
+    profile_photo_path VARCHAR(255) NOT NULL,
+    instagram_handle VARCHAR(255) NOT NULL,
+    is_instagram_connected BOOLEAN NOT NULL DEFAULT FALSE,
+    instagram_access_token VARCHAR(255),
+    billing_first_name VARCHAR(50) NOT NULL,
+    billing_last_name VARCHAR(50) NOT NULL,
+    billing_country VARCHAR(50) NOT NULL,
+    billing_street_address VARCHAR(255) NOT NULL,
+    billing_city VARCHAR(50) NOT NULL,
+    billing_state VARCHAR(50) NOT NULL,
+    billing_zip_code VARCHAR(20) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_on TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    last_login_on TIMESTAMP
+);

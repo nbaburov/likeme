@@ -1,0 +1,71 @@
+name: likeme
+
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?set MYSQL_ROOT_PASSWORD in .env}
+      MYSQL_DATABASE: likeme
+      MYSQL_USER: likeme_mod
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?set MYSQL_PASSWORD in .env}
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  api:
+    build: ./apps/api
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/likeme
+      SPRING_DATASOURCE_USERNAME: likeme_mod
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY:-}
+      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL:-noreply@likeme.local}
+      CORS_ALLOWED_ORIGINS: http://localhost:${WEB_PORT:-3000}
+      APP_FRONTEND_URL: http://localhost:${WEB_PORT:-3000}
+      FILE_UPLOAD_DIR: /app/uploads
+    volumes:
+      - uploads:/app/uploads
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/docs >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+      start_period: 20s
+
+  seed:
+    build: ./apps/seed
+    environment:
+      DB_HOST: db
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DEMO_PASSWORD: ${DEMO_PASSWORD:-demo1234}
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: "no"
+
+  web:
+    build: ./apps/web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  db-data:
+  uploads:
