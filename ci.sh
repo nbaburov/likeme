@@ -45,4 +45,6 @@ done
 
 echo "== End-to-end (Cypress)"
 # Host networking: the app in the browser calls the API on localhost, as it would on a laptop.
-docker run --rm --network host -v "$PWD/apps/web":/e2e -w /e2e cypress/included:13.17.0 --config baseUrl=http://localhost:3000
+# The image carries the 13.17.0 binary (the locked version); npm ci only adds the package the config imports.
+docker run --rm --network host -e CYPRESS_INSTALL_BINARY=0 -v "$PWD/apps/web":/e2e -v /e2e/node_modules -w /e2e \
+  --entrypoint sh cypress/included:13.17.0 -c "npm ci --no-audit --no-fund && npx cypress run --config baseUrl=http://localhost:3000"
