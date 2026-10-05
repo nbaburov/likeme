@@ -101,4 +101,4 @@ Archived. The stack is pinned at the final patch of each line it was built on (S
 
 Source-available under the [PolyForm Noncommercial License 1.0.0](LICENSE). You may read, run, modify and share it for any noncommercial purpose, as long as the copyright notice comes along.
 
-Commercial use needs a separate license, available from NB Limited. Get in touch through [github.com/nbaburov](https://github.com/nbaburov).
+This repository is a showcase, so it doesn't take issues or pull requests. Forks are welcome under the license. Commercial use needs a separate paid license; contact [NB Limited](https://nb-limited.com).
