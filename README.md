@@ -4,7 +4,7 @@ A marketplace where clients buy social media exposure (likes, comments, follows,
 
 I built it alone in my third semester of ICT & Software Engineering at Fontys University of Applied Sciences, between September 2024 and January 2025. This repository is the archived version, merged from the original separate frontend and backend repositories into one monorepo that boots with a single command and comes with seeded demo data.
 
-Write-up: [I made things work. Then I learned to make them last.](https://nb.nb-limited.com/writing/likeme), on why it's built this way and how it got there.
+Write-up: [I made things work. Then I learned to make them last.](https://nb.nb-limited.com/writing/i-made-things-work-then-i-learned-to-make-them-last), on why it's built this way and how it got there.
 
 | | |
 |---|---|
