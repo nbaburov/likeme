@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -13,118 +14,5 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  api:
-    name: API tests
-    runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.4
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: likeme
-          MYSQL_USER: likeme_mod
-          MYSQL_PASSWORD: likeme
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd "mysqladmin ping -h localhost"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 30
-    defaults:
-      run:
-        working-directory: apps/api
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
-        with:
-          distribution: temurin
-          java-version: "21"
-      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
-      - run: ./gradlew test --no-daemon
-
-  web:
-    name: Web lint and build
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/web
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: "24"
-          cache: npm
-          cache-dependency-path: apps/web/package-lock.json
-      - run: npm ci --no-audit --no-fund
-        env:
-          CYPRESS_INSTALL_BINARY: "0"
-      - run: npm run lint
-      - run: npm run build
-        env:
-          NEXT_PUBLIC_API_URL: http://localhost:8080/api
-
-  e2e:
-    name: Stack boot and Cypress
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Generate .env
-        run: |
-          cp .env.example .env
-          sed -i "s|^MYSQL_ROOT_PASSWORD=.*|MYSQL_ROOT_PASSWORD=$(openssl rand -hex 24)|" .env
-          sed -i "s|^MYSQL_PASSWORD=.*|MYSQL_PASSWORD=$(openssl rand -hex 24)|" .env
-          sed -i "s|^JWT_SECRET=.*|JWT_SECRET=$(openssl rand -hex 48)|" .env
-      - name: Boot the stack
-        run: docker compose up -d --build
-      - name: Wait for the seed to finish
-        run: |
-          # docker wait also reports the exit code of a container that has already stopped.
-          code=$(docker wait "$(docker compose ps -aq seed)")
-          docker compose logs seed
-          test "$code" = "0"
-      - name: Wait for the web app
-        run: |
-          for i in $(seq 1 60); do
-            curl -fsS -o /dev/null http://localhost:3000 && exit 0
-            sleep 2
-          done
-          exit 1
-      - name: Demo logins
-        run: |
-          for u in demo_admin demo_client demo_influencer; do
-            status=$(curl -s -o /dev/null -w '%{http_code}' -H 'Content-Type: application/json' \
-              -d "{\"username\":\"$u\",\"password\":\"demo1234\"}" http://localhost:8080/api/auth/login)
-            echo "$u $status"
-            test "$status" = "200"
-          done
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: "24"
-          cache: npm
-          cache-dependency-path: apps/web/package-lock.json
-      - uses: cypress-io/github-action@c541a95ea92d9239347a2355f2e895cd4b3f8060 # v7.4.6
-        with:
-          working-directory: apps/web
-          config: baseUrl=http://localhost:3000
-      - name: Cypress screenshots
-        if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: cypress-screenshots
-          path: apps/web/cypress/screenshots
-          if-no-files-found: ignore
-      - name: Stack logs
-        if: failure()
-        run: docker compose logs --no-color
-
-  secrets:
-    name: Secret scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  showcase:
+    uses: nbaburov/.github/.github/workflows/showcase.yml@main
